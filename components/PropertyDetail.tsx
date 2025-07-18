@@ -74,12 +74,21 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
             {/* 이미지 슬라이더/업로드 */}
             <div className="flex-1 min-w-[320px]">
               <div className="relative h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden mb-2">
-                <Image
-                  src={images[currentImageIndex]}
-                  alt={`${property.title} - 이미지 ${currentImageIndex + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                />
+                <div 
+                  className="w-full h-full flex items-center justify-center text-white font-bold text-4xl"
+                  style={{
+                    backgroundColor: property.id === '1' ? '#4F46E5' : 
+                                   property.id === '2' ? '#10B981' : 
+                                   property.id === '3' ? '#F59E0B' : 
+                                   property.id === '4' ? '#EF4444' : 
+                                   property.id === '5' ? '#8B5CF6' : '#6B7280'
+                  }}
+                >
+                  {property.type === '아파트' ? 'A' : 
+                   property.type === '오피스텔' ? 'O' : 
+                   property.type === '단독주택' ? 'H' : 
+                   property.type === '빌라' ? 'V' : 'P'}
+                </div>
                 {currentImageIndex === 0 && (
                   <button
                     onClick={() => fileInputRef.current?.click()}

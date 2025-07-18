@@ -117,22 +117,28 @@ export default function PropertyList({
                     }`}
                   >
                     <div className="flex items-start space-x-3">
-                      {property.image && (
-                        <div className="relative">
-                          <Image
-                            src={property.image}
-                            alt={property.title}
-                            width={64}
-                            height={64}
-                            className="w-16 h-16 object-cover rounded-lg shadow-sm"
-                          />
-                          {property.id === highlightedPropertyId && (
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                              <div className="w-2 h-2 bg-white rounded-full"></div>
-                            </div>
-                          )}
+                      <div className="relative">
+                        <div 
+                          className="w-16 h-16 rounded-lg shadow-sm flex items-center justify-center text-white font-bold text-sm"
+                          style={{
+                            backgroundColor: property.id === '1' ? '#4F46E5' : 
+                                           property.id === '2' ? '#10B981' : 
+                                           property.id === '3' ? '#F59E0B' : 
+                                           property.id === '4' ? '#EF4444' : 
+                                           property.id === '5' ? '#8B5CF6' : '#6B7280'
+                          }}
+                        >
+                          {property.type === '아파트' ? 'A' : 
+                           property.type === '오피스텔' ? 'O' : 
+                           property.type === '단독주택' ? 'H' : 
+                           property.type === '빌라' ? 'V' : 'P'}
                         </div>
-                      )}
+                        {property.id === highlightedPropertyId && (
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <h3 className={`font-semibold mb-1 truncate ${
                           property.id === highlightedPropertyId ? 'text-blue-700' : 'text-gray-900'

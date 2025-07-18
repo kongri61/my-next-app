@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, MapPinIcon, CurrencyDollarIcon, HomeIcon } from '@heroicons/react/24/outline';
 import { Property } from '../types/property';
 
@@ -118,9 +119,11 @@ export default function PropertyList({
                     <div className="flex items-start space-x-3">
                       {property.image && (
                         <div className="relative">
-                          <img
+                          <Image
                             src={property.image}
                             alt={property.title}
+                            width={64}
+                            height={64}
                             className="w-16 h-16 object-cover rounded-lg shadow-sm"
                           />
                           {property.id === highlightedPropertyId && (

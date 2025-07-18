@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { XMarkIcon, PhoneIcon, MapPinIcon, HomeIcon, UserIcon, CameraIcon } from '@heroicons/react/24/outline';
 import { Property } from '../types/property';
 
@@ -73,10 +74,11 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
             {/* 이미지 슬라이더/업로드 */}
             <div className="flex-1 min-w-[320px]">
               <div className="relative h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden mb-2">
-                <img
+                <Image
                   src={images[currentImageIndex]}
                   alt={`${property.title} - 이미지 ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
+                  layout="fill"
+                  objectFit="cover"
                 />
                 {currentImageIndex === 0 && (
                   <button

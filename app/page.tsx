@@ -163,6 +163,23 @@ export default function HomePage() {
     setFilters(newFilters);
   };
 
+  // 필터 초기화 핸들러
+  const handleFilterReset = () => {
+    setMapFilteredProperties(undefined);
+    setHighlightedPropertyId(undefined);
+    setFilters({
+      dealType: '전체',
+      area: '전체',
+      price: '전체',
+      propertyType: '전체',
+      keyword: '',
+      areaRange: [0, 70],
+      priceRange: [0, 500],
+      deposit: '전체',
+      depositRange: [0, 4000],
+    });
+  };
+
   // 매물 클릭 핸들러
   const handlePropertyClick = (property: Property) => {
     setSelectedProperty(property);
@@ -257,20 +274,32 @@ export default function HomePage() {
   // 마커/클러스터 클릭 시 해당 위치 매물만 목록에 표시
   const handleMapMarkerClick = (properties: Property[]) => {
     console.log('마커 클릭된 매물들:', properties);
-    setMapFilteredProperties(properties);
-    if (!isPropertyListVisible) setIsPropertyListVisible(true);
-    if (properties.length === 1) {
-      setHighlightedPropertyId(properties[0].id);
+    // 필터링된 매물이 있으면 그것을 사용하고, 없으면 전체 매물을 사용
+    if (properties.length > 0) {
+      setMapFilteredProperties(properties);
+      if (!isPropertyListVisible) setIsPropertyListVisible(true);
+      if (properties.length === 1) {
+        setHighlightedPropertyId(properties[0].id);
+      } else {
+        setHighlightedPropertyId(undefined);
+      }
     } else {
+      // 매물이 없으면 필터링을 해제
+      setMapFilteredProperties(undefined);
       setHighlightedPropertyId(undefined);
     }
   };
   
   const handleMapClusterClick = (properties: Property[]) => {
     console.log('클러스터 클릭된 매물들:', properties);
-    setMapFilteredProperties(properties);
-    if (!isPropertyListVisible) setIsPropertyListVisible(true);
-    setHighlightedPropertyId(undefined);
+    if (properties.length > 0) {
+      setMapFilteredProperties(properties);
+      if (!isPropertyListVisible) setIsPropertyListVisible(true);
+      setHighlightedPropertyId(undefined);
+    } else {
+      setMapFilteredProperties(undefined);
+      setHighlightedPropertyId(undefined);
+    }
   };
 
   // 표시할 매물 목록 결정 (지도 필터링된 매물이 있으면 그것을, 없으면 필터링된 매물을)
@@ -282,6 +311,7 @@ export default function HomePage() {
       <Header
         ref={headerRef}
         onFilterChange={handleFilterChange}
+        onFilterReset={handleFilterReset}
         onBulkUploadClick={handleBulkUploadClick}
         isAdmin={isAdmin}
       />

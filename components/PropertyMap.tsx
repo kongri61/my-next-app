@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import { Property } from '../types/property'
+import { Property } from '../lib/propertyData'
 import KakaoMap from './KakaoMap'
 
 interface PropertyMapProps {
@@ -11,7 +11,7 @@ interface PropertyMapProps {
 }
 
 export default function PropertyMap({ properties, selectedProperty, onPropertySelect }: PropertyMapProps) {
-  // 카카오맵 API 키가 없으면 OpenStreetMap 사용
+  // 카카?�맵 API ?��? ?�으�?OpenStreetMap ?�용
   const useKakaoMap = process.env.NEXT_PUBLIC_KAKAO_APP_KEY && 
                      process.env.NEXT_PUBLIC_KAKAO_APP_KEY !== 'your_kakao_app_key_here'
 
@@ -25,7 +25,7 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
     )
   }
 
-  // OpenStreetMap 폴백
+  // OpenStreetMap ?�백
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
@@ -39,11 +39,11 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
       document.head.appendChild(link)
     }
 
-    // Leaflet이 로드되었는지 확인
+    // Leaflet??로드?�었?��? ?�인
     if (typeof window !== 'undefined' && window.L) {
       initializeMap()
     } else {
-      // Leaflet이 로드되지 않았다면 스크립트를 동적으로 로드
+      // Leaflet??로드?��? ?�았?�면 ?�크립트�??�적?�로 로드
       const script = document.createElement('script')
       script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
       script.onload = initializeMap
@@ -56,21 +56,20 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
 
     const L = (window as any).L
     
-    // 대한민국 중심 좌표
+    // ?�?��?�?중심 좌표
     const koreaCenter = [36.3, 127.9]
 
-    // 지도 초기화
-    mapInstanceRef.current = L.map(mapRef.current, {
+    // 지??초기??    mapInstanceRef.current = L.map(mapRef.current, {
       minZoom: 7,
       maxZoom: 18
     }).setView(koreaCenter, 7)
     
-    // OpenStreetMap 타일 레이어 추가
+    // OpenStreetMap ?�???�이??추�?
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(mapInstanceRef.current)
 
-    // 매물 마커 추가
+    // 매물 마커 추�?
     addPropertyMarkers()
   }
 
@@ -79,13 +78,13 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
 
     const L = (window as any).L
     
-    // 기존 마커 제거
+    // 기존 마커 ?�거
     markersRef.current.forEach(marker => {
       mapInstanceRef.current.removeLayer(marker)
     })
     markersRef.current = []
 
-    // 새 마커 추가
+    // ??마커 추�?
     properties.forEach(property => {
       const marker = L.marker([property.lat, property.lng])
         .addTo(mapInstanceRef.current)
@@ -103,25 +102,25 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
         <p class="text-lg font-bold text-blue-600 mb-2">${property.price}</p>
         <p class="text-sm text-gray-600 mb-2">${property.address}</p>
         <div class="flex justify-between text-sm text-gray-500">
-          <span>${property.bedrooms}개 방</span>
+          <span>${property.bedrooms}�?�?/span>
           <span>${property.area}</span>
         </div>
         <button 
           onclick="window.selectProperty('${property.id}')"
           class="w-full mt-3 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
         >
-          상세보기
+          ?�세보기
         </button>
       </div>
     `
   }
 
-  // 선택된 매물로 지도 이동
+  // ?�택??매물�?지???�동
   useEffect(() => {
     if (selectedProperty && mapInstanceRef.current) {
       mapInstanceRef.current.setView([selectedProperty.lat, selectedProperty.lng], 15)
       
-      // 선택된 매물의 마커를 강조
+      // ?�택??매물??마커�?강조
       markersRef.current.forEach(marker => {
         const popup = marker.getPopup()
         if (popup.getContent().includes(selectedProperty.id)) {
@@ -131,14 +130,14 @@ export default function PropertyMap({ properties, selectedProperty, onPropertySe
     }
   }, [selectedProperty])
 
-  // 매물 목록이 변경되면 마커 업데이트
+  // 매물 목록??변경되�?마커 ?�데?�트
   useEffect(() => {
     if (mapInstanceRef.current) {
       addPropertyMarkers()
     }
   }, [properties])
 
-  // 전역 함수로 매물 선택 가능하게 설정
+  // ?�역 ?�수�?매물 ?�택 가?�하�??�정
   useEffect(() => {
     ;(window as any).selectProperty = (propertyId: string) => {
       const property = properties.find(p => p.id === propertyId)

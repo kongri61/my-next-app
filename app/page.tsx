@@ -180,13 +180,6 @@ export default function HomePage() {
     });
   };
 
-  // 매물 클릭 핸들러
-  const handlePropertyClick = (property: Property) => {
-    setSelectedProperty(property);
-    setIsPropertyDetailVisible(true);
-    setHighlightedPropertyId(property.id);
-  };
-
   // 주소 검색 결과 핸들러
   const handleGeocodeResult = (address: string, lat: number, lng: number) => {
     const newProperty: Property = {
@@ -271,7 +264,7 @@ export default function HomePage() {
     }));
   };
 
-  // 마커/클러스터 클릭 시 해당 위치 매물만 목록에 표시
+  // 마커/클러스터 클릭 시 해당 위치 매물만 목록에 표시 (상세페이지 열지 않음)
   const handleMapMarkerClick = (properties: Property[]) => {
     console.log('마커 클릭된 매물들:', properties);
     // 필터링된 매물이 있으면 그것을 사용하고, 없으면 전체 매물을 사용
@@ -280,13 +273,20 @@ export default function HomePage() {
       if (!isPropertyListVisible) setIsPropertyListVisible(true);
       if (properties.length === 1) {
         setHighlightedPropertyId(properties[0].id);
+        // 단일 매물이어도 상세페이지는 열지 않음
+        setSelectedProperty(null);
+        setIsPropertyDetailVisible(false);
       } else {
         setHighlightedPropertyId(undefined);
+        setSelectedProperty(null);
+        setIsPropertyDetailVisible(false);
       }
     } else {
       // 매물이 없으면 필터링을 해제
       setMapFilteredProperties(undefined);
       setHighlightedPropertyId(undefined);
+      setSelectedProperty(null);
+      setIsPropertyDetailVisible(false);
     }
   };
   
@@ -296,10 +296,22 @@ export default function HomePage() {
       setMapFilteredProperties(properties);
       if (!isPropertyListVisible) setIsPropertyListVisible(true);
       setHighlightedPropertyId(undefined);
+      setSelectedProperty(null);
+      setIsPropertyDetailVisible(false);
     } else {
       setMapFilteredProperties(undefined);
       setHighlightedPropertyId(undefined);
+      setSelectedProperty(null);
+      setIsPropertyDetailVisible(false);
     }
+  };
+
+  // 매물 목록에서 매물 클릭 시 상세페이지 열기
+  const handlePropertyClick = (property: Property) => {
+    console.log('매물 목록에서 클릭:', property);
+    setSelectedProperty(property);
+    setIsPropertyDetailVisible(true);
+    setHighlightedPropertyId(property.id);
   };
 
   // 표시할 매물 목록 결정 (지도 필터링된 매물이 있으면 그것을, 없으면 필터링된 매물을)

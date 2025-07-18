@@ -18,13 +18,13 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
   if (!property) return null;
 
   // 대표 이미지 우선순위: localImage > property.image > placeholder
-  const mainImage = localImage || property.image || 'https://via.placeholder.com/400x300/4F46E5/FFFFFF?text=Main';
+  const mainImage = localImage || property.image || '/pa-logo.png';
   const images = [
     mainImage,
-    'https://via.placeholder.com/400x300/10B981/FFFFFF?text=Sub1',
-    'https://via.placeholder.com/400x300/F59E0B/FFFFFF?text=Sub2',
-    'https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Sub3',
-    'https://via.placeholder.com/400x300/8B5CF6/FFFFFF?text=Sub4'
+    '/pa-logo.png',
+    '/pa-logo.png',
+    '/pa-logo.png',
+    '/pa-logo.png'
   ];
 
   const nextImage = () => {

@@ -90,28 +90,9 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
             {/* 이미지 슬라이더/업로드 */}
             <div className="flex-1 min-w-[320px]">
               <div className="relative h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden mb-2">
-                {/* 실제 이미지가 있으면 표시 */}
-                {property.images && property.images.length > 0 ? (
-                  <img 
-                    src={property.images[0]} 
-                    alt={safeString(property.title)}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // 이미지 로드 실패 시 더미 이미지 표시
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const dummyElement = target.nextElementSibling as HTMLElement;
-                      if (dummyElement) {
-                        dummyElement.classList.remove('hidden');
-                      }
-                    }}
-                  />
-                ) : null}
-                {/* 더미 이미지 (기본 표시) */}
+                {/* 매물 타입 표시 (이미지 대신) */}
                 <div 
-                  className={`w-full h-full flex items-center justify-center text-white font-bold text-4xl ${
-                    property.images && property.images.length > 0 ? 'hidden' : ''
-                  }`}
+                  className="w-full h-full flex items-center justify-center text-white font-bold text-6xl"
                   style={{
                     backgroundColor: property.id === '1' ? '#4F46E5' : 
                                    property.id === '2' ? '#10B981' : 
@@ -120,9 +101,7 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
                                    property.id === '5' ? '#8B5CF6' : '#6B7280'
                   }}
                 >
-                  <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                  </svg>
+                  {property.features?.find(f => ['아파트', '오피스텔', '원룸', '빌라', '상가', '사무실'].includes(f))?.charAt(0) || '기'}
                 </div>
                 {currentImageIndex === 0 && (
                   <button

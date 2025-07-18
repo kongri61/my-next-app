@@ -1,7 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
-import Image from 'next/image';
-import { XMarkIcon, PhoneIcon, MapPinIcon, HomeIcon, UserIcon, CameraIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CameraIcon } from '@heroicons/react/24/outline';
 import { Property } from '../lib/propertyData';
 
 interface PropertyDetailProps {
@@ -52,6 +51,23 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
     }
   };
 
+  // 안전한 숫자 변환 함수
+  const safeNumber = (value: any): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const num = parseFloat(value.replace(/[^\d.]/g, ''));
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
+  };
+
+  // 안전한 문자열 변환 함수
+  const safeString = (value: any): string => {
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    return '-';
+  };
+
   return (
     <div
       className={`fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 ${
@@ -61,7 +77,7 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
       <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* 헤더 */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">{property.title}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{safeString(property.title)}</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -78,7 +94,7 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
                 {property.images && property.images.length > 0 ? (
                   <img 
                     src={property.images[0]} 
-                    alt={property.title}
+                    alt={safeString(property.title)}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       // 이미지 로드 실패 시 더미 이미지 표시
@@ -158,22 +174,22 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
               {/* 상업용/건물 매물 정보 표 */}
               <table className="w-full text-sm border mb-4">
                 <tbody>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold w-28">주소</td><td className="px-2 py-1">{property.address || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">거래유형</td><td className="px-2 py-1">{property.priceType || '-'}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold w-28">주소</td><td className="px-2 py-1">{safeString(property.address)}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">거래유형</td><td className="px-2 py-1">{safeString(property.priceType)}</td></tr>
                   <tr><td className="bg-gray-50 px-2 py-1 font-semibold">매물종류</td><td className="px-2 py-1">{property.features?.find(f => ['아파트', '오피스텔', '원룸', '빌라', '상가', '사무실'].includes(f)) || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">가격</td><td className="px-2 py-1">{typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : property.price}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">면적정보</td><td className="px-2 py-1">{property.area}㎡</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">층정보</td><td className="px-2 py-1">{property.floor}층 / {property.totalFloors}층</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">방 개수</td><td className="px-2 py-1">{property.rooms}개</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">화장실</td><td className="px-2 py-1">{property.bathrooms}개</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">가격</td><td className="px-2 py-1">{typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : safeString(property.price)}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">면적정보</td><td className="px-2 py-1">{safeNumber(property.area)}㎡</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">층정보</td><td className="px-2 py-1">{safeNumber(property.floor)}층 / {safeNumber(property.totalFloors)}층</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">방 개수</td><td className="px-2 py-1">{safeNumber(property.rooms)}개</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">화장실</td><td className="px-2 py-1">{safeNumber(property.bathrooms)}개</td></tr>
                 </tbody>
               </table>
               {/* 중개사 정보 카드 */}
               <div className="border rounded-lg p-3 bg-gray-50">
-                <div className="font-bold text-gray-700 mb-1">{property.contact?.agent || '중개업소명'}</div>
-                <div className="text-sm text-gray-600">{property.contact?.phone || '담당자명'}</div>
-                <div className="text-sm text-gray-600">{property.contact?.email || '연락처'}</div>
-                <div className="text-xs text-gray-400 mt-1">{property.address || '주소'}</div>
+                <div className="font-bold text-gray-700 mb-1">{safeString(property.contact?.agent)}</div>
+                <div className="text-sm text-gray-600">{safeString(property.contact?.phone)}</div>
+                <div className="text-sm text-gray-600">{safeString(property.contact?.email)}</div>
+                <div className="text-xs text-gray-400 mt-1">{safeString(property.address)}</div>
                 <div className="text-xs text-gray-400">등록번호</div>
               </div>
             </div>
@@ -182,7 +198,7 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
           <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="font-bold text-lg mb-2">매물 설명</div>
-              <p className="text-gray-700 leading-relaxed">{property.description || '-'}</p>
+              <p className="text-gray-700 leading-relaxed">{safeString(property.description)}</p>
               <div className="font-bold text-lg mt-4 mb-2">매물 특징</div>
               <ul className="list-disc pl-5 text-gray-700 space-y-1">
                 {property.features && property.features.length > 0 ? property.features.map((f: string, i: number) => <li key={i}>{f}</li>) : <li>-</li>}

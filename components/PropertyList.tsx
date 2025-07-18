@@ -50,6 +50,23 @@ export default function PropertyList({
     }
   };
 
+  // 안전한 숫자 변환 함수
+  const safeNumber = (value: any): number => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const num = parseFloat(value.replace(/[^\d.]/g, ''));
+      return isNaN(num) ? 0 : num;
+    }
+    return 0;
+  };
+
+  // 안전한 문자열 변환 함수
+  const safeString = (value: any): string => {
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return value.toString();
+    return '-';
+  };
+
   // 페이지네이션 계산
   const totalPages = Math.ceil(properties.length / itemsPerPage);
   const pagedProperties = properties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -184,26 +201,26 @@ export default function PropertyList({
                           <h3 className={`font-semibold mb-1 truncate ${
                             property.id === highlightedPropertyId ? 'text-blue-700' : 'text-gray-900'
                           }`}>
-                            {property.title}
+                            {safeString(property.title)}
                           </h3>
                           <div className="flex items-center mb-1">
                             <CurrencyDollarIcon className="h-4 w-4 text-green-600 mr-1" />
                             <p className="text-lg font-bold text-green-600">
-                              {typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : property.price}
+                              {typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : safeString(property.price)}
                             </p>
                           </div>
                           <div className="flex items-center mb-2">
                             <MapPinIcon className="h-4 w-4 text-gray-500 mr-1" />
                             <p className="text-sm text-gray-600 truncate">
-                              {property.address}
+                              {safeString(property.address)}
                             </p>
                           </div>
                           <div className="flex items-center justify-between text-xs text-gray-500">
                             <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                              {property.priceType}
+                              {safeString(property.priceType)}
                             </span>
-                            <span>{property.rooms}개 방</span>
-                            <span>{property.area}㎡</span>
+                            <span>{safeNumber(property.rooms)}개 방</span>
+                            <span>{safeNumber(property.area)}㎡</span>
                           </div>
                         </div>
                       </div>

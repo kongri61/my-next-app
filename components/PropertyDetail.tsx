@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { XMarkIcon, PhoneIcon, MapPinIcon, HomeIcon, UserIcon, CameraIcon } from '@heroicons/react/24/outline';
-import { Property } from '../types/property';
+import { Property } from '../lib/propertyData';
 
 interface PropertyDetailProps {
   property: Property | null;
@@ -18,8 +18,8 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
 
   if (!property) return null;
 
-  // 대표 이미지 우선순위: localImage > property.image > placeholder
-  const mainImage = localImage || property.image || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNGY0NmU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NYWluPC90ZXh0Pjwvc3ZnPg==';
+  // 대표 이미지 우선순위: localImage > property.images[0] > placeholder
+  const mainImage = localImage || (property.images && property.images.length > 0 ? property.images[0] : null) || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNGY0NmU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5NYWluPC90ZXh0Pjwvc3ZnPg==';
   const images = [
     mainImage,
     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTBiOTgxIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TdWIxPC90ZXh0Pjwvc3ZnPg==',
@@ -74,8 +74,28 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
             {/* 이미지 슬라이더/업로드 */}
             <div className="flex-1 min-w-[320px]">
               <div className="relative h-64 md:h-80 bg-gray-100 rounded-lg overflow-hidden mb-2">
+                {/* 실제 이미지가 있으면 표시 */}
+                {property.images && property.images.length > 0 ? (
+                  <img 
+                    src={property.images[0]} 
+                    alt={property.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // 이미지 로드 실패 시 더미 이미지 표시
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const dummyElement = target.nextElementSibling as HTMLElement;
+                      if (dummyElement) {
+                        dummyElement.classList.remove('hidden');
+                      }
+                    }}
+                  />
+                ) : null}
+                {/* 더미 이미지 (기본 표시) */}
                 <div 
-                  className="w-full h-full flex items-center justify-center text-white font-bold text-4xl"
+                  className={`w-full h-full flex items-center justify-center text-white font-bold text-4xl ${
+                    property.images && property.images.length > 0 ? 'hidden' : ''
+                  }`}
                   style={{
                     backgroundColor: property.id === '1' ? '#4F46E5' : 
                                    property.id === '2' ? '#10B981' : 
@@ -84,13 +104,9 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
                                    property.id === '5' ? '#8B5CF6' : '#6B7280'
                   }}
                 >
-                  {property.propertyType === '상가' ? 'S' : 
-                   property.propertyType === '사무실' ? 'O' : 
-                   property.propertyType === '기타' ? 'E' : 
-                   property.type === '아파트' ? 'A' : 
-                   property.type === '오피스텔' ? 'O' : 
-                   property.type === '단독주택' ? 'H' : 
-                   property.type === '빌라' ? 'V' : 'P'}
+                  <svg className="w-16 h-16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                  </svg>
                 </div>
                 {currentImageIndex === 0 && (
                   <button
@@ -142,23 +158,22 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
               {/* 상업용/건물 매물 정보 표 */}
               <table className="w-full text-sm border mb-4">
                 <tbody>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold w-28">주소</td><td className="px-2 py-1">{property.address || property.location || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">거래유형</td><td className="px-2 py-1">{property.dealType || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">매물종류</td><td className="px-2 py-1">{property.propertyType || property.type || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">보증금</td><td className="px-2 py-1">{property.deposit || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">면적정보</td><td className="px-2 py-1">{property.area || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">층정보</td><td className="px-2 py-1">{property.floor || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">주차</td><td className="px-2 py-1">{property.parking || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">난방</td><td className="px-2 py-1">{property.heating || '-'}</td></tr>
-                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">입주가능일</td><td className="px-2 py-1">{property.moveInDate || '-'}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold w-28">주소</td><td className="px-2 py-1">{property.address || '-'}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">거래유형</td><td className="px-2 py-1">{property.priceType || '-'}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">매물종류</td><td className="px-2 py-1">{property.features?.find(f => ['아파트', '오피스텔', '원룸', '빌라', '상가', '사무실'].includes(f)) || '-'}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">가격</td><td className="px-2 py-1">{typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : property.price}</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">면적정보</td><td className="px-2 py-1">{property.area}㎡</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">층정보</td><td className="px-2 py-1">{property.floor}층 / {property.totalFloors}층</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">방 개수</td><td className="px-2 py-1">{property.rooms}개</td></tr>
+                  <tr><td className="bg-gray-50 px-2 py-1 font-semibold">화장실</td><td className="px-2 py-1">{property.bathrooms}개</td></tr>
                 </tbody>
               </table>
               {/* 중개사 정보 카드 */}
               <div className="border rounded-lg p-3 bg-gray-50">
-                <div className="font-bold text-gray-700 mb-1">중개업소명</div>
-                <div className="text-sm text-gray-600">담당자명</div>
-                <div className="text-sm text-gray-600">연락처</div>
-                <div className="text-xs text-gray-400 mt-1">주소</div>
+                <div className="font-bold text-gray-700 mb-1">{property.contact?.agent || '중개업소명'}</div>
+                <div className="text-sm text-gray-600">{property.contact?.phone || '담당자명'}</div>
+                <div className="text-sm text-gray-600">{property.contact?.email || '연락처'}</div>
+                <div className="text-xs text-gray-400 mt-1">{property.address || '주소'}</div>
                 <div className="text-xs text-gray-400">등록번호</div>
               </div>
             </div>
@@ -170,7 +185,7 @@ export default function PropertyDetail({ property, isVisible, onClose, onImageCh
               <p className="text-gray-700 leading-relaxed">{property.description || '-'}</p>
               <div className="font-bold text-lg mt-4 mb-2">매물 특징</div>
               <ul className="list-disc pl-5 text-gray-700 space-y-1">
-                {property.features && property.features.length > 0 ? property.features.map((f, i) => <li key={i}>{f}</li>) : <li>-</li>}
+                {property.features && property.features.length > 0 ? property.features.map((f: string, i: number) => <li key={i}>{f}</li>) : <li>-</li>}
               </ul>
             </div>
             {/* 지도/기타 영역 자리 */}

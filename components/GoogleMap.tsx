@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
-import { Property } from "../types/property";
+import { Property } from "../lib/propertyData";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -177,10 +177,10 @@ export default function GoogleMap({
     }
     // 새 마커 추가
     const newMarkers = properties.map((property) => {
-      if (property.lat && property.lng) {
+      if (property.location?.lat && property.location?.lng) {
         const isHighlighted = property.id === highlightedPropertyId;
         const marker = new window.google.maps.Marker({
-          position: { lat: property.lat, lng: property.lng },
+          position: { lat: property.location.lat, lng: property.location.lng },
           map: mapInstance.current,
           title: property.title,
           icon: getMarkerIcon(property, isHighlighted),
@@ -195,7 +195,7 @@ export default function GoogleMap({
         if (onMarkerClick) {
           marker.addListener('click', () => {
             const sameLocation = properties.filter(
-              p => p.lat === property.lat && p.lng === property.lng
+              p => p.location?.lat === property.location?.lat && p.location?.lng === property.location?.lng
             );
             onMarkerClick(sameLocation);
           });
@@ -240,7 +240,9 @@ export default function GoogleMap({
                 const markerPositions = markers.map((m:any) => m.getPosition());
                 const clusterProperties = properties.filter(p =>
                   markerPositions.some((pos:any) =>
-                    Math.abs(p.lat - pos.lat()) < 1e-6 && Math.abs(p.lng - pos.lng()) < 1e-6
+                    p.location?.lat && p.location?.lng &&
+                    Math.abs(p.location.lat - pos.lat()) < 1e-6 && 
+                    Math.abs(p.location.lng - pos.lng()) < 1e-6
                   )
                 );
                 onClusterClick(clusterProperties);

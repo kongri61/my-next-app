@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
-import { Property } from '../types/property';
+import { Property } from '../lib/propertyData';
 
 declare global {
   interface Window {

@@ -25,6 +25,18 @@ export interface Property {
   };
   available: boolean;
   createdAt: string;
+  // 추가 필드들
+  type?: string;
+  bedrooms?: number;
+  image?: string;
+  dealType?: string;
+  propertyType?: string;
+  deposit?: string;
+  parking?: string;
+  heating?: string;
+  moveInDate?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface PropertyFilters {

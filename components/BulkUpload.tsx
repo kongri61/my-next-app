@@ -9,32 +9,11 @@ import {
   ExclamationTriangleIcon,
   ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
-
-interface Property {
-  id: string;
-  title: string;
-  price: string;
-  location: string;
-  type: string;
-  bedrooms: number;
-  area: string;
-  address: string;
-  lat: number;
-  lng: number;
-  dealType: string;
-  propertyType: string;
-  floor?: string;
-  parking?: string;
-  heating?: string;
-  moveInDate?: string;
-  description?: string;
-  features?: string;
-  image?: string;
-}
+import { Property } from '../lib/propertyData';
 
 interface BulkUploadProps {
-  onPropertiesUploaded: (properties: Property[]) => void;
   onClose: () => void;
+  onPropertiesUploaded: (properties: Property[]) => void;
 }
 
 interface UploadResult {
@@ -117,23 +96,28 @@ export default function BulkUpload({ onPropertiesUploaded, onClose }: BulkUpload
         const property: Property = {
           id: `bulk-${Date.now()}-${rowIndex}`,
           title: row.title || '제목 없음',
-          price: row.price || '가격 미정',
-          location: row.location || row.address || '위치 미정',
-          type: row.type || '기타',
-          bedrooms: parseInt(row.bedrooms) || 0,
-          area: row.area || '면적 미정',
+          price: typeof row.price === 'string' ? parseInt(row.price.replace(/[^\d]/g, '')) || 500000000 : 500000000,
+          priceType: row.dealType || '매매',
+          area: typeof row.area === 'string' ? parseFloat(row.area.replace(/[^\d.]/g, '')) || 84.5 : 84.5,
+          rooms: parseInt(row.bedrooms) || 3,
+          bathrooms: 2,
+          floor: typeof row.floor === 'string' ? parseInt(row.floor.replace(/[^\d]/g, '')) || 1 : 1,
+          totalFloors: 5,
           address: row.address || '',
-          lat: parseFloat(row.lat) || 0,
-          lng: parseFloat(row.lng) || 0,
-          dealType: row.dealType || '매매',
-          propertyType: row.propertyType || '기타',
-          floor: row.floor || '',
-          parking: row.parking || '',
-          heating: row.heating || '',
-          moveInDate: row.moveInDate || '',
           description: row.description || '',
-          features: row.features || '',
-          image: row.image || '',
+          features: row.features ? row.features.split(',').map((f: string) => f.trim()) : ['기타'],
+          images: row.image ? [row.image] : [],
+          location: {
+            lat: parseFloat(row.lat) || 37.5665,
+            lng: parseFloat(row.lng) || 126.9780
+          },
+          contact: {
+            phone: '02-1234-5678',
+            agent: '중개업소',
+            email: 'agent@example.com'
+          },
+          available: true,
+          createdAt: new Date().toISOString()
         };
 
         properties.push(property);

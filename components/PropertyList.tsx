@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon, MapPinIcon, CurrencyDollarIcon, HomeIcon } from '@heroicons/react/24/outline';
-import { Property } from '../types/property';
+import { Property } from '../lib/propertyData';
 
 interface PropertyListProps {
   properties: Property[];
@@ -101,76 +101,115 @@ export default function PropertyList({
               </div>
             ) : (
               <div className="space-y-4">
-                {pagedProperties.map((property, index) => (
-                  <div
-                    key={property.id}
-                    ref={property.id === highlightedPropertyId ? highlightedRef : null}
-                    onClick={() => onPropertyClick(property)}
-                    onKeyDown={(e) => handleKeyDown(e, property)}
-                    tabIndex={0}
-                    role="button"
-                    aria-label={`${property.title} 매물 선택`}
-                    className={`border rounded-lg p-4 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
-                      property.id === highlightedPropertyId
-                        ? 'border-blue-500 bg-blue-50 shadow-lg scale-105 ring-2 ring-blue-200'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
-                    }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div className="relative">
-                        <div 
-                          className="w-16 h-16 rounded-lg shadow-sm flex items-center justify-center text-white font-bold text-sm"
-                          style={{
-                            backgroundColor: property.id === '1' ? '#4F46E5' : 
-                                           property.id === '2' ? '#10B981' : 
-                                           property.id === '3' ? '#F59E0B' : 
-                                           property.id === '4' ? '#EF4444' : 
-                                           property.id === '5' ? '#8B5CF6' : '#6B7280'
-                          }}
-                        >
-                          {property.propertyType === '상가' ? 'S' : 
-                           property.propertyType === '사무실' ? 'O' : 
-                           property.propertyType === '기타' ? 'E' : 
-                           property.type === '아파트' ? 'A' : 
-                           property.type === '오피스텔' ? 'O' : 
-                           property.type === '단독주택' ? 'H' : 
-                           property.type === '빌라' ? 'V' : 'P'}
-                        </div>
-                        {property.id === highlightedPropertyId && (
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                {pagedProperties.map((property, index) => {
+                  const type = property.features?.find(f => ['아파트', '오피스텔', '원룸', '빌라', '상가', '사무실'].includes(f)) || '기타';
+                  
+                  const colorMap: { [key: string]: string } = {
+                    '아파트': '#4F46E5',
+                    '오피스텔': '#10B981', 
+                    '원룸': '#F59E0B',
+                    '빌라': '#EF4444',
+                    '상가': '#8B5CF6',
+                    '사무실': '#6B7280',
+                    '기타': '#6B7280'
+                  };
+
+                  const letterMap: { [key: string]: string } = {
+                    '아파트': 'A',
+                    '오피스텔': 'O',
+                    '원룸': 'R',
+                    '빌라': 'V',
+                    '상가': 'S',
+                    '사무실': 'O',
+                    '기타': 'E'
+                  };
+
+                  return (
+                    <div
+                      key={property.id}
+                      ref={property.id === highlightedPropertyId ? highlightedRef : null}
+                      onClick={() => onPropertyClick(property)}
+                      onKeyDown={(e) => handleKeyDown(e, property)}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`${property.title} 매물 선택`}
+                      className={`border rounded-lg p-4 cursor-pointer transition-all duration-300 transform hover:scale-105 ${
+                        property.id === highlightedPropertyId
+                          ? 'border-blue-500 bg-blue-50 shadow-lg scale-105 ring-2 ring-blue-200'
+                          : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="relative">
+                          {/* 매물 이미지 또는 더미 이미지 */}
+                          <div className="w-16 h-16 rounded-lg shadow-sm overflow-hidden bg-gray-200 flex items-center justify-center">
+                            {property.images && property.images.length > 0 ? (
+                              <img 
+                                src={property.images[0]} 
+                                alt={property.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  // 이미지 로드 실패 시 더미 이미지 표시
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = 'none';
+                                  target.nextElementSibling?.classList.remove('hidden');
+                                }}
+                              />
+                            ) : null}
+                            {/* 더미 이미지 (기본 표시) */}
+                            <div 
+                              className={`w-full h-full flex items-center justify-center text-white font-bold text-sm ${
+                                property.images && property.images.length > 0 ? 'hidden' : ''
+                              }`}
+                              style={{
+                                backgroundColor: property.id === '1' ? '#4F46E5' : 
+                                               property.id === '2' ? '#10B981' : 
+                                               property.id === '3' ? '#F59E0B' : 
+                                               property.id === '4' ? '#EF4444' : 
+                                               property.id === '5' ? '#8B5CF6' : '#6B7280'
+                              }}
+                            >
+                              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                              </svg>
+                            </div>
                           </div>
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className={`font-semibold mb-1 truncate ${
-                          property.id === highlightedPropertyId ? 'text-blue-700' : 'text-gray-900'
-                        }`}>
-                          {property.title}
-                        </h3>
-                        <div className="flex items-center mb-1">
-                          <CurrencyDollarIcon className="h-4 w-4 text-green-600 mr-1" />
-                          <p className="text-lg font-bold text-green-600">
-                            {property.price}
-                          </p>
+                          {property.id === highlightedPropertyId && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex items-center mb-2">
-                          <MapPinIcon className="h-4 w-4 text-gray-500 mr-1" />
-                          <p className="text-sm text-gray-600 truncate">
-                            {property.location}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-gray-500">
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                            {property.type}
-                          </span>
-                          <span>{property.bedrooms}개 방</span>
-                          <span>{property.area}</span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className={`font-semibold mb-1 truncate ${
+                            property.id === highlightedPropertyId ? 'text-blue-700' : 'text-gray-900'
+                          }`}>
+                            {property.title}
+                          </h3>
+                          <div className="flex items-center mb-1">
+                            <CurrencyDollarIcon className="h-4 w-4 text-green-600 mr-1" />
+                            <p className="text-lg font-bold text-green-600">
+                              {typeof property.price === 'number' ? `${(property.price / 10000).toFixed(0)}만원` : property.price}
+                            </p>
+                          </div>
+                          <div className="flex items-center mb-2">
+                            <MapPinIcon className="h-4 w-4 text-gray-500 mr-1" />
+                            <p className="text-sm text-gray-600 truncate">
+                              {property.address}
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              {property.priceType}
+                            </span>
+                            <span>{property.rooms}개 방</span>
+                            <span>{property.area}㎡</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

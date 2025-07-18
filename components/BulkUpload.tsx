@@ -193,7 +193,7 @@ export default function BulkUpload({ onPropertiesUploaded, onClose }: BulkUpload
         moveInDate: '즉시입주',
         description: '강남구 역삼동에 위치한 신축 아파트입니다. 역세권에 위치하여 교통이 매우 편리하며, 깨끗하고 현대적인 시설을 갖추고 있습니다.',
         features: '신축,역세권,주차가능,엘리베이터,개별난방',
-        image: '/pa-logo.png'
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNGY0NmU1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5BPC90ZXh0Pjwvc3ZnPg=='
       }
     ];
 

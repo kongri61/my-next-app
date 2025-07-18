@@ -128,7 +128,10 @@ export default function PropertyList({
                                            property.id === '5' ? '#8B5CF6' : '#6B7280'
                           }}
                         >
-                          {property.type === '아파트' ? 'A' : 
+                          {property.propertyType === '상가' ? 'S' : 
+                           property.propertyType === '사무실' ? 'O' : 
+                           property.propertyType === '기타' ? 'E' : 
+                           property.type === '아파트' ? 'A' : 
                            property.type === '오피스텔' ? 'O' : 
                            property.type === '단독주택' ? 'H' : 
                            property.type === '빌라' ? 'V' : 'P'}

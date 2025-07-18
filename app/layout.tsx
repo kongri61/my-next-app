@@ -4,8 +4,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: '지도 기반 매물 사이트',
-  description: 'Notion과 Pory를 활용한 지도 기반 매물 홍보 사이트',
-  keywords: ['매물', '부동산', '지도', 'Notion', 'Pory'],
+  description: '지도 기반 매물 홍보 사이트',
+  keywords: ['매물', '부동산', '지도'],
 }
 
 export default function RootLayout({

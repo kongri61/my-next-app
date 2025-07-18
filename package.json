@@ -1,7 +1,7 @@
 {
   "name": "property-map-site",
   "version": "1.0.0",
-  "description": "지도 기반 매물 홍보 사이트 - Notion + Pory 활용",
+  "description": "지도 기반 매물 홍보 사이트",
   "main": "index.js",
   "scripts": {
     "dev": "next dev -p 3000",
@@ -15,7 +15,6 @@
     "@googlemaps/markerclusterer": "^2.6.2",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
-    "@notionhq/client": "^2.2.14",
     "@types/papaparse": "^5.3.16",
     "autoprefixer": "^10.4.16",
     "axios": "^1.6.0",
@@ -42,8 +41,6 @@
   "keywords": [
     "property",
     "map",
-    "notion",
-    "pory",
     "real-estate"
   ],
   "author": "Property Map Site",

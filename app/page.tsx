@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useLayoutEffect, useMemo, useEffect } from 'react';
-import Header, { FilterOptions } from '../components/Header';
+import Header from '../components/Header';
+import type { FilterOptions } from '../components/Header';
 import GoogleMap from '../components/GoogleMap';
 import PropertyList from '../components/PropertyList';
 import PropertyDetail from '../components/PropertyDetail';
